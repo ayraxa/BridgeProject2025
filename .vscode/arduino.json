@@ -1,0 +1,4 @@
+{
+    "sketch": "ESP-32\\ESP-32.ino",
+    "board": "arduino:avr:uno"
+}
