@@ -9,7 +9,7 @@ import java.util.logging.Logger;
 public class Bridge {
     private static final Logger logger = Logger.getLogger(Bridge.class.getName());
 
-    public static void main() {
+    public static void main(String[] args) {
         final int port = 1234; // FIX
 
         try (ServerSocket serverSocket = new ServerSocket(port)) {
