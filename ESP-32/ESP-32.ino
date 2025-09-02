@@ -5,9 +5,10 @@
 #include <SPI.h>
 #include <ArduinoJson.h>
 
+bool openState;
+
 // Helper Functions
 void readJson();
-void encoderISR();
 
 WiFiUDP udp;
 JsonDocument json;
@@ -18,14 +19,28 @@ char pass[] = "";
 char* udpAdd = "UNDEFINED";
 
 void setup(){
-    pinMode(13, OUTPUT);
+
 }
 
 void loop() {
-    digitalWrite(13, HIGH);
-    delay(100);
-    digitalWrite(13, LOW);
-    delay(100);
+
+}
+
+void bridgePivot(){
+  //if want open, open
+
+  //if want close, close
+}
+
+void controlSys(bool openState){
+  if(openState){
+    //booms down
+    //lights
+  }
+  else(){
+    //booms up
+    //lights
+  }
 }
 
 void readJson() {
