@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Bridge Control UI</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+  <h1>Bridge Control Panel</h1>
+
+  <button id="openBtn">Open / Raise</button>
+  <button id="closeBtn">Close / Lower</button>
+  <button id="shutdownBtn">Shut Down</button>
+
+  <script>
+    // js to send commands to java server
+    function sendCommand(command) {
+      fetch("http://localhost:1234/command", {
+        method: "POST",
+        headers: {
+          "Content-Type": "text/plain"
+        },
+        body: command
+      })
+      .then(response => {
+        if (!response.ok) throw new Error("Network error");
+        console.log(`Sent command: ${command}`);
+      })
+      .catch(error => {
+        console.error("Failed to send command:", error);
+      });
+    }
+
+    //  button events
+    document.getElementById("openBtn").onclick = () => sendCommand("open");
+    document.getElementById("closeBtn").onclick = () => sendCommand("close");
+    document.getElementById("shutdownBtn").onclick = () => sendCommand("shutdown");
+  </script>
+
+</body>
+</html>
