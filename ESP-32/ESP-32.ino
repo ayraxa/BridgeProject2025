@@ -99,30 +99,27 @@ void trafficLight(){
       digitalWrite(trafLedYellow,LOW);
       digitalWrite(trafLedRed,LOW);
 
-  } else {
-      if(ledState==1)    {   //green
-          digitalWrite(trafLedGreen,HIGH);
-          digitalWrite(trafLedYellow,LOW);
-          digitalWrite(trafLedRed,LOW);
+  }
+  else if(ledState==1)    {   //green
+      digitalWrite(trafLedGreen,HIGH);
+      digitalWrite(trafLedYellow,LOW);
+      digitalWrite(trafLedRed,LOW);
 
-      } else {
-          if(ledState==2)    {    //yellow/flashing red
-              digitalWrite(trafLedGreen,LOW);
-              digitalWrite(trafLedYellow,HIGH);
-              digitalWrite(trafLedRed,LOW);
+  }
+  else if(ledState==2)    {    //yellow/flashing red
+      digitalWrite(trafLedGreen,LOW);
+      digitalWrite(trafLedYellow,HIGH);
+      digitalWrite(trafLedRed,LOW);
 
-          } else {
-              if(ledState==3)    {    //full red
-                  digitalWrite(trafLedGreen,LOW);
-                  digitalWrite(trafLedYellow,LOW);
-                  digitalWrite(trafLedRed,HIGH);
-
-              }
           }
-              
-      }
+  else if(ledState==3)    {    //full red
+      digitalWrite(trafLedGreen,LOW);
+      digitalWrite(trafLedYellow,LOW);
+      digitalWrite(trafLedRed,HIGH);
+
   }
 }
+              
 
 bool endStopOpenCheck() {
   if(esOpenState == LOW){
@@ -135,7 +132,6 @@ bool endStopOpenCheck() {
 
 
 void beamBreakCheck() {
-
   if (beam1State == LOW){
     beamCounter += 1;
   }
