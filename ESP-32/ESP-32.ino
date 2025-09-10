@@ -75,22 +75,23 @@ void loop() {
     if (client) {
       Serial.println("java client connected!");
       client.println("Hello from ESP32!\n");
-      while () {
-        main();
+      while (client) {
+        home();
       }
     }
   }
   delay(100);
 }
 
-void main(){
-  beamBreakCheck();
+void home(){
+  timer.every(1000, beamBreakCheck);
   while(beamCounter != 0){
-    timer.every(1000, beamBreakCheck());
+    timer.every(1000, beamBreakCheck);
     bridgeOpen();
+    timer.tick();
   }
   bridgeClose();
-  timer.tick;
+  timer.tick();
 }
 
 void trafficLight(){
@@ -131,25 +132,29 @@ bool endStopOpenCheck() {
 }
 
 
-void beamBreakCheck() {
+bool beamBreakCheck(void *) {
   if (beam1State == LOW){
     beamCounter += 1;
   }
   if(beam2State == LOW){
     beamCounter -= 1;
   }
+  return true;
 }
 
 void bridgeOpen(){
   if(!endStopOpenCheck){
-
+    ledState = 3;
+    
   }
+  trafficLight();
   bridgeState = true;
 }
 
 void bridgeClose(){
   if(endStopOpenCheck){
-
+    ledState = 1;
+    trafficLight();
   }
   bridgeState = false;
 }
