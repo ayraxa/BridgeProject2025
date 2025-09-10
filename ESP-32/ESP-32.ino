@@ -1,5 +1,8 @@
 #include <WiFi.h>
 #include <arduino-timer.h>
+#include <Servo.h>
+
+Servo gateServo = Servo();
 
 // network config
 const char* ssid = "Engg2k3k";
@@ -20,7 +23,7 @@ const int endStopClosed = 0;
 const int beamBreak1 = 0;
 const int beamBreak2 = 0;
 const int motorPin = 0;
-const int servoPin = 0;
+const int servoPin = 12;
 const int piezoPin = 0;
 
 // variables
@@ -29,9 +32,15 @@ int beam1State;
 int beam2State;
 int esOpenState;
 int esClosedState;
-int beamCounter; //entered = TRUE, exited = FALSE
+int beamCounter; //entered +=1, exited -=1
 bool bridgeState; //open = TRUE, closed = False
 auto timer = timer_create_default();
+int servoSpeed = 1; //servo speed from 1-10 //dont exceed 100
+int servoMaxUs = 2100;  //specs for SG90 are 2400/1500/600 //specs for FS90 should be 2100/1500/900
+int servoMidUs = 1630;
+int servoMinUs = 630;
+int timeDelay = 0;
+int servoPos = 1;
 
 void setup() {
   // Pin in/out allocation
@@ -143,18 +152,61 @@ bool beamBreakCheck(void *) {
 }
 
 void bridgeOpen(){
-  if(!endStopOpenCheck){
+  if(!endStopOpenCheck){ //if not open
+    if(bridgeState == false){
+      ledState = 2;
+      trafficLight();
+      delay(3000); //change to non blocking delay
+      ledState = 3;
+      trafficLight();
+      moveServoMid(servoPin, servoSpeed);
+    }
     ledState = 3;
-    
+    bridgeState = true;
   }
+  
   trafficLight();
-  bridgeState = true;
 }
 
 void bridgeClose(){
   if(endStopOpenCheck){
-    ledState = 1;
-    trafficLight();
+    ledState = 3;
   }
-  bridgeState = false;
+  else{
+    ledState = 1;
+    if(bridgeState == true){
+      moveServoMin(servoPin, servoSpeed);
+    }
+    bridgeState = false;
+  }
+  trafficLight();
 }
+
+void moveServoMid(int pin, int speed) {
+    int speedDelay=millis();
+    int i=servoMinUs;
+
+    while(i<=servoMidUs) {
+        if(millis()-speedDelay>10) {
+            gateServo.writeMicroseconds(pin,i);
+            speedDelay=millis();
+            i=i+1*servoSpeed;
+        }
+    }
+    gateServo.writeMicroseconds(pin,servoMidUs);
+}
+
+void moveServoMin(int pin, int speed) {
+    int speedDelay=millis();
+    int i=servoMidUs;
+
+    while(i>=servoMinUs) {
+        if(millis()-speedDelay>10) {
+            gateServo.writeMicroseconds(pin,i);
+            speedDelay=millis();
+            i=i-1*servoSpeed;
+        }
+    }
+    gateServo.writeMicroseconds(pin,servoMinUs);
+}
+
