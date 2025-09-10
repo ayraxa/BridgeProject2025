@@ -54,6 +54,7 @@ void setup() {
   pinMode(endStopClosed, INPUT);
   pinMode(beamBreak1, INPUT);
   pinMode(beamBreak2, INPUT);
+  timeDelay=millis();
 
   Serial.begin(115200);
   delay(1000);
