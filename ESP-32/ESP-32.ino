@@ -25,13 +25,14 @@ const int beamBreak2 = 0;
 const int motorPin = 0;
 const int servoPin = 12;
 const int piezoPin = 0;
+const int trigPin = 0; //ultra
+const int echoPin = 0; //ultra
+
 
 // variables
 int ledState = 0;   //0 = off, 1 = green, 2 = yellow/flashing red, 3 = full red
-int beam1State;
-int beam2State;
-int esOpenState;
-int esClosedState;
+int beam1State, beam2State;
+int esOpenState, esClosedState;
 int beamCounter; //entered +=1, exited -=1
 bool bridgeState; //open = TRUE, closed = False
 auto timer = timer_create_default();
@@ -54,6 +55,9 @@ void setup() {
   pinMode(endStopClosed, INPUT);
   pinMode(beamBreak1, INPUT);
   pinMode(beamBreak2, INPUT);
+  pinMode(trigPin, OUTPUT);  
+	pinMode(echoPin, INPUT);
+
   timeDelay=millis();
 
   Serial.begin(115200);
@@ -100,7 +104,9 @@ void home(){
     bridgeOpen();
     timer.tick();
   }
-  bridgeClose();
+  if(!checkBoatUnder){
+    bridgeClose();
+  }
   timer.tick();
 }
 
@@ -171,10 +177,10 @@ void bridgeOpen(){
 
 void bridgeClose(){
   if(endStopOpenCheck){
-    ledState = 3;
+    ledState = 3; //red
   }
   else{
-    ledState = 1;
+    ledState = 1; //green
     if(bridgeState == true){
       moveServoMin(servoPin, servoSpeed);
     }
@@ -211,3 +217,17 @@ void moveServoMin(int pin, int speed) {
     gateServo.writeMicroseconds(pin,servoMinUs);
 }
 
+bool checkBoatUnder(){
+  digitalWrite(trigPin, LOW);  
+	delayMicroseconds(2);  
+	digitalWrite(trigPin, HIGH);  
+	delayMicroseconds(10);  
+	digitalWrite(trigPin, LOW);
+
+  float duration = pulseIn(echoPin, HIGH);
+  float distance = (duration*.0343)/2;
+  if(distance < 23.75){ //if return distance is less than the expected 250mm -5%
+    return true;
+  }
+  return false;
+}
