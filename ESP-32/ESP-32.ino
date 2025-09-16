@@ -1,4 +1,5 @@
 #include <WiFi.h>
+#include <Arduino.h>
 #include <arduino-timer.h>
 #include <Servo.h>
 
