@@ -1,16 +1,8 @@
-#include <WiFi.h>
+#include <Arduino.h>
 #include <arduino-timer.h>
 #include <Servo.h>
 
 Servo gateServo = Servo();
-
-// network config
-const char* ssid = "Engg2k3k";
-const char* password = "password";
-const int serverPort = 1234;
-
-WiFiServer server(serverPort);
-WiFiClient client;
 
 // pin definition
 const int trafLedGreen = 27;   //change pins 
@@ -67,39 +59,10 @@ void setup() {
 
   Serial.begin(115200);
   delay(1000);
-
-  // Connect to Wi-Fi
-  Serial.println("Connecting to Wi-Fi...");
-  WiFi.begin(ssid, password);
-
-  while (WiFi.status() != WL_CONNECTED) {
-    delay(500);
-    Serial.print(".");
-  }
-
-  Serial.println("\n Wi-Fi connected!");
-  Serial.print("IP Address: ");
-  Serial.println(WiFi.localIP());
-
-  // Start TCP server
-  server.begin();
-  Serial.print("TCP server started on port ");
-  Serial.println(serverPort);
 }
 
 void loop() {
-  // Check for incoming client connection
-  if (!client || !client.connected()) {
-    client = server.available();
-    if (client) {
-      Serial.println("java client connected!");
-      client.println("Hello from ESP32!\n");
-      while (client) {
-        home();
-      }
-    }
-  }
-  delay(100);
+    home();
 }
 
 void home(){
