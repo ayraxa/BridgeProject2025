@@ -1,4 +1,4 @@
-package bridge.src;
+package main.src;
 
 public class sendMsg {
     
