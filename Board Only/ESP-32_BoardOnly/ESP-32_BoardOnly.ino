@@ -5,22 +5,23 @@
 Servo gateServo = Servo();
 
 // pin definition
-const int trafLedGreen = 27;   //change pins 
-const int trafLedYellow = 26;
-const int trafLedRed = 25;
-const int pedLedGreen = 0;
-const int pedLedRed = 0;
-const int endStopOpen = 0;
-const int endStopClosed = 0;
-const int beamBreak1 = 0;
-const int beamBreak2 = 0;
-const int motorPin = 0;
-const int servoPin = 12;
-const int piezoPin = 0;
+const int trafLedGreen = 12;   //change pins 
+const int trafLedYellow = 14;
+const int trafLedRed = 27;
+const int pedLedGreen = 25;
+const int pedLedRed = 26;
+const int endStopOpen = 35;
+const int endStopClosed = 34;
+const int beamBreak1 = 23;
+const int beamBreak2 = 22;
+const int servoPin = 33;
+//const int piezoPin = 0;
 const int trigPin = 0; //ultra
 const int echoPin = 0; //ultra
 int motorPinIn1 = 19;  //connect to in1
 int motorPinIn2 = 18;  //connect to in2
+int motorPinSpeed = 21;  //connect to ENA
+
 
 
 // variables
@@ -35,8 +36,7 @@ int servoMaxUs = 2100;  //specs for SG90 are 2400/1500/600 //specs for FS90 shou
 int servoMidUs = 1630;
 int servoMinUs = 630;
 int timeDelay = 0;
-int servoPos = 1;\
-int motorPinSpeed = 21;  //connect to ENA
+int servoPos = 1;
 int motorSpeed = 127; //from 0 to 255
 
 
