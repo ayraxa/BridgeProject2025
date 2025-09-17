@@ -21,8 +21,6 @@ int timeDelay = 0;
 int servoPos = 1; //1 = min, 2 = mid, 3 = max   //set to 0 for arm calibration
 int boomgateState = 0;  //0 = closed, 1 = open
 
-
-
 //lights setup
 int trafState = 0;   //0 = off, 1 = green, 2 = yellow/flashing red, 3 = full red
 int trafLedGreen = 12;   //change pins 
@@ -31,8 +29,6 @@ int trafLedRed = 27;
 int pedLedRed = 26;
 int pedLedGreen = 25;
 String lightRead[4] = {"off","both green","solid yellow + flasing red","both red"};
-
-
 
 unsigned long redFlash = 0;
 unsigned long currentMillis = 0;
@@ -43,12 +39,15 @@ int beam1Pin = 23;
 int beam2Pin = 22;
 bool beamCounter = false; //entered = true, exited = false
 
-
 //endstop setup
 int esTopPin = 35;
 int esBottomPin = 34;
 int esTopState = 0;
 int esBottomState = 0;
+
+//ultrasonic setup
+int trigPin = 0; //ultra
+int echoPin = 0; //ultra
 
 //other setup
 int onboardLedPin = 2;  //standard for esp32
@@ -77,6 +76,10 @@ void setup() {
     //beam break pin allocations
     pinMode(beam1Pin,INPUT_PULLUP);
     pinMode(beam2Pin,INPUT_PULLUP);
+
+    //ultrasonic pin allocations
+    pinMode(trigPin, OUTPUT);  
+	  pinMode(echoPin, INPUT);
     
     //other pin allocations
     pinMode(onboardLedPin,OUTPUT);  //onboard led allocation
@@ -214,6 +217,21 @@ void beamBreakCheck()  {
   }
 }
 
+bool checkBoatUnder(){
+  digitalWrite(trigPin, LOW);  
+	delayMicroseconds(2);  
+	digitalWrite(trigPin, HIGH);  
+	delayMicroseconds(10);  
+	digitalWrite(trigPin, LOW);
+
+  float duration = pulseIn(echoPin, HIGH);
+  float distance = (duration*.0343)/2;
+  if(distance < 23.75){ //if return distance is less than the expected 250mm -5%
+    return true;
+  }
+  return false;
+}
+
 void loop() {
   //anything needed every loop goes here
   currentMillis=millis();
@@ -278,7 +296,7 @@ void loop() {
       //Boomgates
       // >Close boomgates
       //--------------------
-      if(currentMillis-cycleMillis>11000)  {
+      if(currentMillis-cycleMillis>9000)  {
         moveServoMid(servoPin,servoSpeed);
         //--------------------
         //Main Motor
@@ -317,8 +335,10 @@ void loop() {
         // >Wait until boat clears river
         //--------------------
         if(beamCounter==false) {
-          resetCycleTimer();
-          bridgeState=3;
+          if(checkBoatUnder()==false)  {
+            resetCycleTimer();
+            bridgeState=3;
+          }
         }
 
       } else {
@@ -336,7 +356,7 @@ void loop() {
           //Boomgates
           // >Open boomgates
           //--------------------
-          if(currentMillis-cycleMillis>5000&&boomgateState==0)  {
+          if(currentMillis-cycleMillis>3000&&boomgateState==0)  {
             moveServoMin(servoPin,servoSpeed);
             resetCycleTimer();
           }
@@ -346,7 +366,7 @@ void loop() {
           // >Green traffic lights
           // >Green pedestrian lights
           //--------------------
-          if(currentMillis-cycleMillis>10000)  {
+          if(currentMillis-cycleMillis>6000)  {
             trafState=1;
           }
 
@@ -354,7 +374,7 @@ void loop() {
           //State
           // >Switch state to closed
           //--------------------
-          if(currentMillis-cycleMillis>11000) {
+          if(currentMillis-cycleMillis>7000) {
             resetCycleTimer();
             bridgeState=4;
           }
