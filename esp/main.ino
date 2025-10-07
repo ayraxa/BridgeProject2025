@@ -3,7 +3,7 @@
 
 // wifi setup
 const char *ssid = "iPhone";
-const char *password = "";
+const char *password = "lawlight2121";
 
 unsigned long hbIntervalMs = 5000; // heartbeat every 5s??
 unsigned long nextHeartbeatMs = 0;
