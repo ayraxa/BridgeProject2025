@@ -16,8 +16,8 @@ import java.util.logging.Logger;
 public class Bridge {
 
     private static final Logger logger = Logger.getLogger(Bridge.class.getName());
-    private static final String ESP_IP   = "172.20.10.4";
-    private static final int    ESP_PORT = 1234;  
+    private static final String ESP_IP   = "10.0.0.63";
+    private static final int ESP_PORT = 1234;  
 
     public static void main(String[] args) throws IOException {
         startUiServer();   // never returns
@@ -56,7 +56,7 @@ public class Bridge {
                  PrintWriter out = new PrintWriter(sock.getOutputStream(), true)) {
 
                 out.println(command);
-                logger.info("[ESP]     forwarded: " + command);
+                logger.info("[ESP] forwarded: " + command);
             } catch (IOException io) {
                 logger.severe("[ESP] connection failed: " + io.getMessage());
             }
