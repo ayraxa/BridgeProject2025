@@ -4,6 +4,8 @@ import socket
 import threading
 
 #run 'python bridgebrige.py' 
+#open html live server from vscode rightclick
+
 # configuration
 ESP_IP = "172.20.10.5"
 #"172.20.10.10"

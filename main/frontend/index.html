@@ -1,20 +1,46 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <title>Bridge Control UI</title>
   <link rel="stylesheet" href="styles.css">
 </head>
+
 <body>
 
   <h1>Bridge Control Panel</h1>
+  <div class="container">
+    <!-- left col -->
+    <div class="column">
+      <section>
+        <h2>Bridge Controls</h2>
+        <button id="openBtn" class="open-btn">Open / Raise</button>
+        <button id="closeBtn">Close / Lower</button>
+        <button id="shutdownBtn" class="off">Shut Down</button>
+      </section>
 
-  <button id="openBtn">Open / Raise</button>
-  <button id="closeBtn">Close / Lower</button>
-  <button id="shutdownBtn">Shut Down</button>
+      <section>
+        <h2>Boom Gates</h2>
+        <button id="boomGateOpen">Boom Gate Open</button>
+        <button id="boomGateClose" class="off">Boom Gate Close</button>
+      </section>
+    </div>
+
+    <!-- right col -->
+    <div class="column">
+      <section>
+        <h2>Traffic Lights</h2>
+        <button id="trafficlightGreen" class="greenLight">Traffic Light Green</button>
+        <button id="trafficlightYellow" class="yellowLight">Traffic Light Yellow</button>
+        <button id="trafficlightRed" class="redLight">Traffic Light Red</button>
+        <button id="trafficlight" class="off">Traffic Lights Off</button>
+      </section>
+    </div>
+  </div>
 
   <script>
-    // js to send commands to java server
+    // js to send commands to python server
     function sendCommand(command) {
       fetch("http://localhost:1234/command", {
         method: "POST",
@@ -23,13 +49,13 @@
         },
         body: command
       })
-      .then(response => {
-        if (!response.ok) throw new Error("Network error");
-        console.log(`Sent command: ${command}`);
-      })
-      .catch(error => {
-        console.error("Failed to send command:", error);
-      });
+        .then(response => {
+          if (!response.ok) throw new Error("Network error");
+          console.log(`Sent command: ${command}`);
+        })
+        .catch(error => {
+          console.error("Failed to send command:", error);
+        });
     }
 
     //  button events
@@ -39,4 +65,5 @@
   </script>
 
 </body>
+
 </html>

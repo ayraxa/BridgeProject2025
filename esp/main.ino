@@ -1,9 +1,20 @@
 #include <Servo.h>
 #include <ArduinoJson.h>
 
+/*
+how to connect to mobile hotspot(windows):
+Change IP address from automatic (DHCP) -> Manual
+E.G.
+IF esp32 ip prints out: 172.20.10.5
+(keep it in range 172.20.10.x)
+IP Address: 172.20.10.10
+Subnet Prefix length: 24
+Gateway: 172.20.10.1
+DNS: blank
+*/
 // wifi setup
-const char *ssid = "iPhone";
-const char *password = "lawlight2121";
+const char *ssid = "";
+const char *password = "";
 
 unsigned long hbIntervalMs = 5000; // heartbeat every 5s??
 unsigned long nextHeartbeatMs = 0;

@@ -12,7 +12,7 @@ import java.net.Socket;
 import java.nio.charset.StandardCharsets;
 import java.util.concurrent.Executors;
 import java.util.logging.Logger;
-
+//not using, use bridgebridge.py
 public class Bridge {
 
     private static final Logger logger = Logger.getLogger(Bridge.class.getName());
