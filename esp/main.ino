@@ -314,7 +314,7 @@ void moveServoMin(int pin, int speed)
     int speedDelay = millis();
     int i = servoMidUs;
 
-    while (i >= servoMinUs)
+    while (i >= servoMinUs && cmd = "open")
     {
         if (millis() - speedDelay > 10)
         {
@@ -339,7 +339,7 @@ void setTrafficLights(int trafficState)
     }
     else
     {
-        if (trafficState == 1)
+        if (trafficState == 1 && cmd == "open")
         { // traffic go
             digitalWrite(trafLedGreen, HIGH);
             digitalWrite(trafLedYellow, LOW);
@@ -498,7 +498,7 @@ void loop()
             // Boomgates
             // >Close boomgates
             //--------------------
-            if (currentMillis - cycleMillis > 9000)
+            if (currentMillis - cycleMillis > 9000 && cmd == "open")
             {
                 moveServoMid(servoPin, servoSpeed);
                 //--------------------
