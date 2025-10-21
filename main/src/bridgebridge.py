@@ -103,5 +103,5 @@ if __name__ == "__main__":
     threading.Thread(target=connect_to_esp, daemon=True).start()
 
     # start HTTP server for frontend uI 
-    print("Starting HTTP server on http://127.0.0.1:1234")
+    print("Starting HTTP server on http://127.0.0.1:5501/main/frontend/index.html")
     HTTPServer(("127.0.0.1", 1234), Handler).serve_forever()
