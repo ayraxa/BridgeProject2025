@@ -1,5 +1,6 @@
-#include <Servo.h>
+#include <ESP32Servo.h>
 #include <ArduinoJson.h>
+#include <WiFi.h>
 
 /*
 how to connect to mobile hotspot(windows):
