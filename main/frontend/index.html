@@ -10,6 +10,14 @@
 <body>
 
   <h1>Bridge Control Panel</h1>
+  <!-- Control Mode Switch -->
+  <div class="control-section">
+    <label for="controlMode">Control Mode:</label>
+    <select id="controlMode">
+      <option value="manual">Manual</option>
+      <option value="auto">Automatic</option>
+    </select>
+  </div>
   <div class="container">
     <!-- left col -->
     <div class="column">
@@ -58,10 +66,24 @@
         });
     }
 
-    //  button events
+    // main bridge controls 
     document.getElementById("openBtn").onclick = () => sendCommand("open");
     document.getElementById("closeBtn").onclick = () => sendCommand("close");
     document.getElementById("shutdownBtn").onclick = () => sendCommand("shutdown");
+    // Boom Gate Controls
+    document.getElementById("boomGateOpen").onclick = () => sendCommand("boom_open");
+    document.getElementById("boomGateClose").onclick = () => sendCommand("boom_close");
+
+    // Traffic Light Controls
+    document.getElementById("trafficlightGreen").onclick = () => sendCommand("traffic_green");
+    document.getElementById("trafficlightYellow").onclick = () => sendCommand("traffic_yellow");
+    document.getElementById("trafficlightRed").onclick = () => sendCommand("traffic_red");
+    document.getElementById("trafficlight").onclick = () => sendCommand("traffic_off");
+
+    document.getElementById("controlMode").onchange = (e) => {
+      const selectedMode = e.target.value;
+      sendCommand(`mode_${selectedMode}`);
+    }
   </script>
 
 </body>

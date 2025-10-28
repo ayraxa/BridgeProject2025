@@ -44,10 +44,19 @@ class Handler(BaseHTTPRequestHandler):
         print(f"UI sent command: {body}")
 
         # map command to byte codes
+        # WHATS GETTING SENT OVER TO ESP32 
         command_map = {
-            "open": b"3\n",
-            "close": b"4\n",
-            "shutdown": b"shutdown\n"
+            "open": b"open\n",
+            "close": b"close\n",
+            "shutdown": b"shutdown\n",
+            "boom_open": b"boom_open\n",
+            "boom_close": b"boom_close\n",
+            "traffic_green": b"traffic_green\n",
+            "traffic_yellow": b"traffic_yellow\n",
+            "traffic_red": b"traffic_red\n",
+            "traffic_off": b"traffic_off\n",
+            "mode_manual": b"mode_manual\n", 
+            "mode_auto": b"mode_auto\n"
         }
 
         # send to ESP if connected

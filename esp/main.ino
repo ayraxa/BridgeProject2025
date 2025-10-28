@@ -163,6 +163,7 @@ void handleIncoming()
         cmd.toLowerCase();
         Serial.println(cmd);
         // TESTS
+        
         if (cmd == "open")
         {
             bridgeState = 2;   // open
