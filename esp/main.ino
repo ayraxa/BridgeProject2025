@@ -83,6 +83,9 @@ int onboardLedPin = 2; // standard for esp32
 unsigned long debugMillis = 0;
 int spanClosed = 0;
 
+// automatic mode
+bool autoMode = false;
+
 void setup()
 {
     Serial.begin(9600);
@@ -133,6 +136,26 @@ void setup()
     timeDelay = millis();
 }
 
+// send esp32 status
+void sendStatus()
+{
+    if (!client || !client.connected())
+        return;
+
+    StaticJsonDocument<256> doc;
+    doc["type"] = "status";
+    doc["seq"] = hbSeq++; // idx
+    doc["uptime_ms"] = millis();
+    doc["bridgeState"] = stateRead[bridgeState];
+    doc["boomgateState"] = boomgateState == 1 ? "open" : "closed"; // if,else
+    doc["trafficLight"] = lightRead[trafState];
+    doc["beamCounter"] = beamCounter;
+    doc["boatDetected"] = checkBoatUnder();
+
+    serializeJson(doc, client);
+    client.println(); // newline => NDJSON
+}
+
 // handle commands from the UI
 void handleIncoming()
 {
@@ -163,16 +186,17 @@ void handleIncoming()
         cmd.toLowerCase();
         Serial.println(cmd);
         // TESTS
-        
+        StaticJsonDocument<96> ack;
+
         if (cmd == "open")
         {
-            bridgeState = 2;   // open
-            boomgateState = 1; // open
-            trafState = 1;     // green
-            sendStatus();      // push new state
-                               // optional ack:
-            Serial.println("Open pressed");
-            StaticJsonDocument<96> ack;
+            bridgeState = 1; // transition to opening
+            resetCycleTimer();
+            mainMotorOpen();                    // physically lift the bridge
+            moveServoMid(servoPin, servoSpeed); // close boom gates
+            bridgeState = 2;                    // mark as open
+            Serial.println("Bridge opened manually");
+            sendStatus();
             ack["type"] = "ack";
             ack["cmd"] = "open";
             serializeJson(ack, client);
@@ -180,12 +204,13 @@ void handleIncoming()
         }
         else if (cmd == "close")
         {
-            bridgeState = 4;   // closed
-            boomgateState = 0; // closed
-            trafState = 3;     // red
+            bridgeState = 3; // transition to closing
+            resetCycleTimer();
+            mainMotorClose();                   // lower the bridge
+            moveServoMin(servoPin, servoSpeed); // open boom gates
+            bridgeState = 4;                    // mark as closed
             sendStatus();
             Serial.println("close pressed");
-            StaticJsonDocument<96> ack;
             ack["type"] = "ack";
             ack["cmd"] = "close";
             serializeJson(ack, client);
@@ -200,27 +225,76 @@ void handleIncoming()
             Serial.println("shutdown pressed");
             client.stop();
         }
+
+        // boom gate controls
+        else if (cmd == "boom_open")
+        {
+            moveServoMin(servoPin, servoSpeed);
+            boomgateState = 1;
+            Serial.println("Boom gate manually opened");
+            sendStatus();
+        }
+        else if (cmd == "boom_close")
+        {
+            moveServoMid(servoPin, servoSpeed);
+            boomgateState = 0;
+            Serial.println("Boom gate manually closed");
+            sendStatus();
+        }
+
+        // traffic light controls
+        else if (cmd == "traffic_green")
+        {
+            trafState = 1;
+            setTrafficLights(trafState);
+            Serial.println("Traffic lights set to GREEN (manual)");
+            sendStatus();
+        }
+        else if (cmd == "traffic_yellow")
+        {
+            trafState = 2;
+            setTrafficLights(trafState);
+            Serial.println("Traffic lights set to YELLOW (manual)");
+            sendStatus();
+        }
+        else if (cmd == "traffic_red")
+        {
+            trafState = 3;
+            setTrafficLights(trafState);
+            Serial.println("Traffic lights set to RED (manual)");
+            sendStatus();
+        }
+        else if (cmd == "traffic_off")
+        {
+            trafState = 0;
+            setTrafficLights(trafState);
+            Serial.println("Traffic lights turned OFF (manual)");
+            sendStatus();
+        }
+        // modes
+        else if (cmd == "mode_manual")
+        {
+            autoMode = false;
+            Serial.println("Switched to MANUAL mode");
+            sendStatus();
+        }
+        else if (cmd == "mode_auto")
+        {
+            autoMode = true;
+            Serial.println("Switched to AUTOMATIC mode");
+            sendStatus();
+        }
+        // errors
+        else
+        {
+            StaticJsonDocument<96> errMsg;
+            errMsg["type"] = "error";
+            errMsg["msg"] = "Unknown command";
+            serializeJson(errMsg, client);
+            client.println();
+            Serial.println("Unknown command: " + cmd);
+        }
     }
-}
-
-// send esp32 status
-void sendStatus()
-{
-    if (!client || !client.connected())
-        return;
-
-    StaticJsonDocument<256> doc;
-    doc["type"] = "status";
-    doc["seq"] = hbSeq++; // idx
-    doc["uptime_ms"] = millis();
-    doc["bridgeState"] = stateRead[bridgeState];
-    doc["boomgateState"] = boomgateState == 1 ? "open" : "closed"; // if,else
-    doc["trafficLight"] = lightRead[trafState];
-    doc["beamCounter"] = beamCounter;
-    doc["boatDetected"] = checkBoatUnder();
-
-    serializeJson(doc, client);
-    client.println(); // newline => NDJSON
 }
 
 // checking to see if its periodically connceted
@@ -316,7 +390,7 @@ void moveServoMin(int pin, int speed)
     int speedDelay = millis();
     int i = servoMidUs;
 
-    while (i >= servoMinUs && cmd = "open")
+    while (i >= servoMinUs &&cmd = "open")
     {
         if (millis() - speedDelay > 10)
         {
@@ -341,7 +415,7 @@ void setTrafficLights(int trafficState)
     }
     else
     {
-        if (trafficState == 1 && cmd == "open")
+        if (trafficState == 1)
         { // traffic go
             digitalWrite(trafLedGreen, HIGH);
             digitalWrite(trafLedYellow, LOW);
@@ -433,7 +507,11 @@ void loop()
         }
     }
     // ui commands
-    handleIncoming();
+    //if it is automatic 
+    if (!autoMode)
+    {
+        handleIncoming();
+    }
     //--------------------
     // Serial monitor output
     //--------------------
