@@ -1,47 +1,95 @@
 body {
-    background-color: white;
-    font-family: Arial, sans-serif;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    height: 100vh;
-    margin: 0;
-  }
-  
-  h1 {
-    margin-bottom: 40px;
-    font-size: 32px;
-  }
-  
-  button {
-    padding: 20px 40px;
-    font-size: 20px;
-    margin: 10px;
-    border: none;
-    border-radius: 10px;
-    background-color: #f0f0f0;
-    cursor: pointer;
-    transition: 0.2s ease;
-  }
-  
-  button:hover {
-    background-color: #ddd;
-  }
-  button:hover {
-    background-color: #ddd;
-  }
-  .greenLight:hover{
-    background:#90EE90; 
-  }
-  .yellowLight:hover{
-    background:#FFED29; 
-  }
-  .redLight:hover{
-    background: #FF474C;
-  }
-  .off:hover{
-    background: #D2042D;
-    color: white; 
-  }
-  
+  background-color: white;
+  font-family: Arial, sans-serif;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+  margin: 0;
+}
+
+h1 {
+  margin-bottom: 40px;
+  font-size: 32px;
+}
+
+button {
+  padding: 20px 40px;
+  font-size: 20px;
+  margin: 10px;
+  border: none;
+  border-radius: 10px;
+  background-color: #f0f0f0;
+  cursor: pointer;
+  transition: 0.2s ease;
+}
+
+button:hover {
+  background-color: #ddd;
+}
+
+.greenLight:hover {
+  background: #90EE90;
+}
+
+.yellowLight:hover {
+  background: #FFED29;
+}
+
+.redLight:hover {
+  background: #FF474C;
+}
+
+.off:hover {
+  background: #D2042D;
+  color: white;
+}
+
+button.active {
+  color: white;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+}
+
+#openBtn.active {
+  background-color: #2ecc71;
+}
+
+/* green */
+#closeBtn.active {
+  background-color: #FF474C;
+}
+
+/* red */
+#shutdownBtn.active {
+  background-color:  #D2042D;
+}
+
+/* dark grey */
+#boomGateOpen.active {
+  background-color: #3cb371;
+}
+
+/* green */
+#boomGateClose.active {
+  background-color: #FF474C;
+}
+
+/* red */
+#trafficlightGreen.active {
+  background-color: #32CD32;
+}
+
+#trafficlightYellow.active {
+  background-color: #FFD700;
+  color: black;
+}
+
+#trafficlightRed.active {
+  background-color: #D2042D;
+}
+
+#trafficlight.active {
+  background-color: #D2042D;
+  color: white;
+}

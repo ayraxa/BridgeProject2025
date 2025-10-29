@@ -66,19 +66,50 @@
         });
     }
 
+    function toggleButton(btn) {
+      btn.classList.toggle("active");
+    }
+
     // main bridge controls 
-    document.getElementById("openBtn").onclick = () => sendCommand("open");
-    document.getElementById("closeBtn").onclick = () => sendCommand("close");
-    document.getElementById("shutdownBtn").onclick = () => sendCommand("shutdown");
+    document.getElementById("openBtn").onclick = (e) => {
+      toggleButton(e.target);
+      sendCommand("open");
+    }
+    document.getElementById("closeBtn").onclick = (e) => { 
+      toggleButton(e.target);
+      sendCommand("close"); 
+    }
+    document.getElementById("shutdownBtn").onclick = (e) => {
+      toggleButton(e.target);
+      sendCommand("shutdown");
+    }
     // Boom Gate Controls
-    document.getElementById("boomGateOpen").onclick = () => sendCommand("boom_open");
-    document.getElementById("boomGateClose").onclick = () => sendCommand("boom_close");
+    document.getElementById("boomGateOpen").onclick = (e) => {
+      toggleButton(e.target);
+      sendCommand("boom_open");
+    }
+    document.getElementById("boomGateClose").onclick = (e) => {
+      toggleButton(e.target);
+      sendCommand("boom_close");
+    }
 
     // Traffic Light Controls
-    document.getElementById("trafficlightGreen").onclick = () => sendCommand("traffic_green");
-    document.getElementById("trafficlightYellow").onclick = () => sendCommand("traffic_yellow");
-    document.getElementById("trafficlightRed").onclick = () => sendCommand("traffic_red");
-    document.getElementById("trafficlight").onclick = () => sendCommand("traffic_off");
+    document.getElementById("trafficlightGreen").onclick = (e) => {
+      toggleButton(e.target);
+      sendCommand("traffic_green");
+    }
+    document.getElementById("trafficlightYellow").onclick = (e) => {
+      toggleButton(e.target);
+      sendCommand("traffic_yellow");
+    }
+    document.getElementById("trafficlightRed").onclick = (e) => {
+      toggleButton(e.target);
+      sendCommand("traffic_red");
+    }
+    document.getElementById("trafficlight").onclick = (e) => {
+      toggleButton(e.target);
+      sendCommand("traffic_off");
+    }
 
     document.getElementById("controlMode").onchange = (e) => {
       const selectedMode = e.target.value;
