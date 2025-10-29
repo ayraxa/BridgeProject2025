@@ -103,19 +103,6 @@ void loop() {
   delay(100);
 }
 
-void home(){
-  timer.every(1000, beamBreakCheck);
-  while(beamCounter != 0){
-    timer.every(1000, beamBreakCheck);
-    bridgeOpen();
-    timer.tick();
-  }
-  if(!checkBoatUnder){
-    bridgeClose();
-  }
-  timer.tick();
-}
-
 void trafficLight(){
   if(ledState==0)    {    //off
       digitalWrite(trafLedGreen,LOW);
@@ -251,4 +238,17 @@ bool checkBoatUnder(){
     return true;
   }
   return false;
+}
+
+void home(){
+  timer.every(1000, beamBreakCheck);
+  while(beamCounter != 0){
+    timer.every(1000, beamBreakCheck);
+    bridgeOpen();
+    timer.tick();
+  }
+  if(!checkBoatUnder){
+    bridgeClose();
+  }
+  timer.tick();
 }
