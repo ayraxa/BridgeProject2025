@@ -8,115 +8,135 @@
 </head>
 
 <body>
+  <div class="wrapper">
 
-  <h1>Bridge Control Panel</h1>
-  <!-- Control Mode Switch -->
-  <div class="control-section">
-    <label for="controlMode">Control Mode:</label>
-    <select id="controlMode">
-      <option value="manual">Manual</option>
-      <option value="auto">Automatic</option>
-    </select>
-  </div>
-  <div class="container">
-    <!-- left col -->
-    <div class="column">
-      <section>
-        <h2>Bridge Controls</h2>
-        <button id="openBtn" class="open-btn">Open / Raise</button>
-        <button id="closeBtn">Close / Lower</button>
-        <button id="shutdownBtn" class="off">Shut Down</button>
-      </section>
+    <h1>Bridge Control Panel</h1>
+    <!-- Control Mode Switch -->
+    <div class="control-section">
+      <label for="controlMode">Control Mode:</label>
+      <select id="controlMode">
+        <option value="manual">Manual</option>
+        <option value="auto">Automatic</option>
+      </select>
+    </div>
+    <div class="container">
+      <!-- left col -->
+      <div class="column">
+        <section>
+          <h2>Bridge Controls</h2>
+          <button id="openBtn" class="open-btn">Open / Raise</button>
+          <button id="closeBtn">Close / Lower</button>
+          <button id="shutdownBtn" class="off">Shut Down</button>
+        </section>
 
-      <section>
-        <h2>Boom Gates</h2>
-        <button id="boomGateOpen">Boom Gate Open</button>
-        <button id="boomGateClose" class="off">Boom Gate Close</button>
-      </section>
+        <section>
+          <h2>Boom Gates</h2>
+          <button id="boomGateOpen">Boom Gate Open</button>
+          <button id="boomGateClose" class="off">Boom Gate Close</button>
+        </section>
+      </div>
+
+      <!-- right col -->
+      <div class="column">
+        <section>
+          <h2>Traffic Lights</h2>
+          <button id="trafficlightGreen" class="greenLight">Traffic Light Green</button>
+          <button id="trafficlightYellow" class="yellowLight">Traffic Light Yellow</button>
+          <button id="trafficlightRed" class="redLight">Traffic Light Red</button>
+          <button id="trafficlight" class="off">Traffic Lights Off</button>
+        </section>
+      </div>
+    </div>
+    <!-- Terminal Output Viewer -->
+    <div id="terminal-output">
+      Waiting for messages from Server...
     </div>
 
-    <!-- right col -->
-    <div class="column">
-      <section>
-        <h2>Traffic Lights</h2>
-        <button id="trafficlightGreen" class="greenLight">Traffic Light Green</button>
-        <button id="trafficlightYellow" class="yellowLight">Traffic Light Yellow</button>
-        <button id="trafficlightRed" class="redLight">Traffic Light Red</button>
-        <button id="trafficlight" class="off">Traffic Lights Off</button>
-      </section>
-    </div>
-  </div>
-
-  <script>
-    // js to send commands to python server
-    function sendCommand(command) {
-      fetch("http://localhost:1234/command", {
-        method: "POST",
-        headers: {
-          "Content-Type": "text/plain"
-        },
-        body: command
-      })
-        .then(response => {
-          if (!response.ok) throw new Error("Network error");
-          console.log(`Sent command: ${command}`);
+    <script>
+      // js to send commands to python server
+      function sendCommand(command) {
+        fetch("http://localhost:1234/command", {
+          method: "POST",
+          headers: {
+            "Content-Type": "text/plain"
+          },
+          body: command
         })
-        .catch(error => {
-          console.error("Failed to send command:", error);
-        });
-    }
+          .then(response => {
+            if (!response.ok) throw new Error("Network error");
+            console.log(`Sent command: ${command}`);
+          })
+          .catch(error => {
+            console.error("Failed to send command:", error);
+          });
+      }
 
-    function toggleButton(btn) {
-      btn.classList.toggle("active");
-    }
+      function toggleButton(btn) {
+        btn.classList.toggle("active");
+      }
+      // get and update terminal output periodically
+      function fetchLogs() {
+        fetch("http://localhost:1234/log")
+          .then(response => response.json())
+          .then(data => {
+            const logArea = document.getElementById("terminal-output");
+            logArea.innerText = data.log.join("\n");
 
-    // main bridge controls 
-    document.getElementById("openBtn").onclick = (e) => {
-      toggleButton(e.target);
-      sendCommand("open");
-    }
-    document.getElementById("closeBtn").onclick = (e) => { 
-      toggleButton(e.target);
-      sendCommand("close"); 
-    }
-    document.getElementById("shutdownBtn").onclick = (e) => {
-      toggleButton(e.target);
-      sendCommand("shutdown");
-    }
-    // Boom Gate Controls
-    document.getElementById("boomGateOpen").onclick = (e) => {
-      toggleButton(e.target);
-      sendCommand("boom_open");
-    }
-    document.getElementById("boomGateClose").onclick = (e) => {
-      toggleButton(e.target);
-      sendCommand("boom_close");
-    }
+            // autoscroll to bottom
+            logArea.scrollTop = logArea.scrollHeight;
+          })
+          .catch(error => console.error("Log fetch error:", error));
+      }
 
-    // Traffic Light Controls
-    document.getElementById("trafficlightGreen").onclick = (e) => {
-      toggleButton(e.target);
-      sendCommand("traffic_green");
-    }
-    document.getElementById("trafficlightYellow").onclick = (e) => {
-      toggleButton(e.target);
-      sendCommand("traffic_yellow");
-    }
-    document.getElementById("trafficlightRed").onclick = (e) => {
-      toggleButton(e.target);
-      sendCommand("traffic_red");
-    }
-    document.getElementById("trafficlight").onclick = (e) => {
-      toggleButton(e.target);
-      sendCommand("traffic_off");
-    }
+      // Start polling every second
+      setInterval(fetchLogs, 1000);
 
-    document.getElementById("controlMode").onchange = (e) => {
-      const selectedMode = e.target.value;
-      sendCommand(`mode_${selectedMode}`);
-    }
-  </script>
+      // main bridge controls 
+      document.getElementById("openBtn").onclick = (e) => {
+        toggleButton(e.target);
+        sendCommand("open");
+      }
+      document.getElementById("closeBtn").onclick = (e) => {
+        toggleButton(e.target);
+        sendCommand("close");
+      }
+      document.getElementById("shutdownBtn").onclick = (e) => {
+        toggleButton(e.target);
+        sendCommand("shutdown");
+      }
+      // Boom Gate Controls
+      document.getElementById("boomGateOpen").onclick = (e) => {
+        toggleButton(e.target);
+        sendCommand("boom_open");
+      }
+      document.getElementById("boomGateClose").onclick = (e) => {
+        toggleButton(e.target);
+        sendCommand("boom_close");
+      }
 
+      // Traffic Light Controls
+      document.getElementById("trafficlightGreen").onclick = (e) => {
+        toggleButton(e.target);
+        sendCommand("traffic_green");
+      }
+      document.getElementById("trafficlightYellow").onclick = (e) => {
+        toggleButton(e.target);
+        sendCommand("traffic_yellow");
+      }
+      document.getElementById("trafficlightRed").onclick = (e) => {
+        toggleButton(e.target);
+        sendCommand("traffic_red");
+      }
+      document.getElementById("trafficlight").onclick = (e) => {
+        toggleButton(e.target);
+        sendCommand("traffic_off");
+      }
+
+      document.getElementById("controlMode").onchange = (e) => {
+        const selectedMode = e.target.value;
+        sendCommand(`mode_${selectedMode}`);
+      }
+    </script>
 </body>
 
 </html>

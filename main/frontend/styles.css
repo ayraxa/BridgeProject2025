@@ -4,9 +4,10 @@ body {
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
-  height: 100vh;
   margin: 0;
+  padding: 0;
+  height: 100vh;
+  overflow: hidden;
 }
 
 h1 {
@@ -93,3 +94,27 @@ button.active {
   background-color: #D2042D;
   color: white;
 }
+
+.wrapper {
+  width: 100%;
+  max-width: 1000px;
+  padding: 20px;
+  flex: 1;
+  overflow-y: auto;
+}
+
+#terminal-output {
+  overflow-y: auto;
+  background-color: #111;
+  color: #0f0;
+  font-family: monospace;
+  font-size: 14px;
+  padding: 10px;
+  border-radius: 5px;
+  white-space: pre-wrap;
+  border: 1px solid #333;
+  width: 100%;
+  height: 30vh; /* fixed height for logs */
+  box-sizing: border-box;
+}
+

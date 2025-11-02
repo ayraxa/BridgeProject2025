@@ -16,6 +16,13 @@ LOG = []
 # global socket object
 esp_sock = None
 
+def log(message):
+    """helper function to print AND log to the UI."""
+    print(message)
+    LOG.append(message)
+    if len(LOG) > 200:  # keep the log size smal
+        LOG.pop(0)
+
 # handle commands from browser
 class Handler(BaseHTTPRequestHandler):
     def _set_ok(self):
@@ -65,12 +72,17 @@ class Handler(BaseHTTPRequestHandler):
                 if body in command_map:
                     esp_sock.sendall(command_map[body])
                     print(f"Sent to ESP32: {command_map[body].decode().strip()}")
+                    log(f"Sent to ESP32: {command_map[body].decode().strip()}")
                 else:
                     print("Unknown command")
+                    log("Unknown command from UI")
             except Exception as e:
                 print("Error sending to ESP32:", e)
+                log(f"Error sending to ESP32: {e}")
+                
         else:
             print("ESP32 not connected")
+            log("ESP32 not connected yet")
 
         self._set_ok()
         self.wfile.write(json.dumps({"ok": True, "received": body}).encode("utf-8"))
@@ -89,6 +101,7 @@ def connect_to_esp():
         sock = socket.create_connection((ESP_IP, ESP_PORT), timeout=5)
         esp_sock = sock
         print(f"Connected to ESP32 at {ESP_IP}:{ESP_PORT}")
+        log(f"Connected to ESP32 at {ESP_IP}:{ESP_PORT}")
         
         # optionally send greeting
         sock.sendall(b"hello from python\n")
@@ -102,10 +115,13 @@ def connect_to_esp():
                 try:
                     msg = json.loads(line)
                     print("Received JSON from ESP32:", msg)
+                    log(f"Received JSON from ESP32: {msg}")
                 except json.JSONDecodeError:
                     print("Bad JSON from ESP32:", line)
+                    log(f"Bad JSON from ESP32: {line}")
     except Exception as e:
         print("Failed to connect to ESP32:", e)
+        log(f"Failed to connect to ESP32: {e}")
 
 if __name__ == "__main__":
     # start ESP connection in background
