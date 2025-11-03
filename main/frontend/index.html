@@ -24,15 +24,15 @@
       <div class="column">
         <section>
           <h2>Bridge Controls</h2>
-          <button id="openBtn" class="open-btn">Open / Raise</button>
-          <button id="closeBtn">Close / Lower</button>
-          <button id="shutdownBtn" class="off">Shut Down</button>
+          <button id="openBtn" class="open-btn" data-group="bridge">Open / Raise</button>
+          <button id="closeBtn" data-group="bridge">Close / Lower</button>
+          <button id="shutdownBtn" class="off" data-group="bridge">Shut Down</button>
         </section>
 
         <section>
           <h2>Boom Gates</h2>
-          <button id="boomGateOpen">Boom Gate Open</button>
-          <button id="boomGateClose" class="off">Boom Gate Close</button>
+          <button id="boomGateOpen" data-group="boom">Boom Gate Open</button>
+          <button id="boomGateClose" class="off" data-group="boom">Boom Gate Close</button>
         </section>
       </div>
 
@@ -40,10 +40,10 @@
       <div class="column">
         <section>
           <h2>Traffic Lights</h2>
-          <button id="trafficlightGreen" class="greenLight">Traffic Light Green</button>
-          <button id="trafficlightYellow" class="yellowLight">Traffic Light Yellow</button>
-          <button id="trafficlightRed" class="redLight">Traffic Light Red</button>
-          <button id="trafficlight" class="off">Traffic Lights Off</button>
+          <button id="trafficlightGreen" class="greenLight" data-group="traffic">Traffic Light Green</button>
+          <button id="trafficlightYellow" class="yellowLight" data-group="traffic">Traffic Light Yellow</button>
+          <button id="trafficlightRed" class="redLight" data-group="traffic">Traffic Light Red</button>
+          <button id="trafficlight" class="off" data-group="traffic">Traffic Lights Off</button>
         </section>
       </div>
     </div>
@@ -72,6 +72,19 @@
       }
 
       function toggleButton(btn) {
+        const group = btn.dataset.group;
+        if (!group) return;
+
+        const buttons = document.querySelectorAll(`button[data-group="${group}"]`);
+
+        // if button is already active, deactivate it (allow none active)
+        if (btn.classList.contains("active")) {
+          btn.classList.remove("active");
+          return;
+        }
+
+        // otherwise, deactivate all others and activate this one
+        buttons.forEach(b => b.classList.remove("active"));
         btn.classList.toggle("active");
       }
       // get and update terminal output periodically
