@@ -7,9 +7,7 @@ import threading
 #open html live server from vscode rightclick
 
 # configuration
-ESP_IP = "172.20.10.5"
-#"172.20.10.10"
-# "10.0.0.63"
+ESP_IP = ""
 ESP_PORT = 1234
 LOG = []
 
